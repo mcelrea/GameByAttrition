@@ -25,14 +25,25 @@ public class Entity {
         this.color = color;
     }
 
+    public boolean isColliding(Entity other) {
+        return getCollisionBox().overlaps(other.getCollisionBox());
+    }
+
     public Rectangle getCollisionBox() {
         return new Rectangle(x,y,width,height);
+    }
+
+    public void render(ShapeRenderer shapeRenderer) {
+        shapeRenderer.setColor(color);
+        shapeRenderer.rect(x,y,width,height);
     }
 
     public void renderCollisionBox(ShapeRenderer shapeRenderer) {
         Rectangle r = getCollisionBox();
         shapeRenderer.setColor(1,1,0,1);
+        shapeRenderer.set(ShapeRenderer.ShapeType.Line);
         shapeRenderer.rect(r.x,r.y,r.width,r.height);
+        shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
     }
 
     public float getX() {

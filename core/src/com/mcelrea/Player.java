@@ -17,13 +17,6 @@ public class Player extends Entity {
         speed = 150;
     }
 
-    public void render(ShapeRenderer shapeRenderer) {
-        shapeRenderer.setColor(color);
-        shapeRenderer.rect(x,y,width,height);
-        shapeRenderer.set(ShapeRenderer.ShapeType.Line);
-        renderCollisionBox(shapeRenderer);
-    }
-
     public void updatePlayer(float delta) {
         if(Gdx.input.isKeyPressed(Input.Keys.UP)) {
             y += speed * delta;
