@@ -15,12 +15,18 @@ import java.util.ArrayList;
 
 public class GameScreen implements Screen {
 
-    private static final int WIDTH = 1280;
-    private static final int HEIGHT = 720;
+    public static final int WIDTH = 1280;
+    public static final int HEIGHT = 720;
 
-    private Player player = new Player();
+    private boolean gameOver = false;
+
+    public static Player player = new Player();
 
     ArrayList<Entity> entities = new ArrayList<Entity>();
+
+    EntitySpawner entitySpawner = new EntitySpawner(1000);
+
+    private long startTime;
 
     //SpriteBatch allows the drawing of sprites (2D images) to the screen
     private SpriteBatch spriteBatch;
@@ -47,17 +53,31 @@ public class GameScreen implements Screen {
         defaultFont = new BitmapFont();
 
         createEntities();
+
+        startTime = System.currentTimeMillis();//time stamp
+    }
+
+    public void renderGUI(SpriteBatch spriteBatch) {
+        defaultFont.draw(spriteBatch, "" + ((System.currentTimeMillis()-startTime)/1000), 600, 650);
     }
 
     public void createEntities() {
         entities.add(new EatableEntity(400, 400, 20, 20, new Color(0,0,1,1)));
         entities.add(new PoisonEntity(600, 200, 20, 20, new Color(0,1,0,1)));
+        entities.add(new SimpleChaseEnemy((int)(Math.random() * WIDTH),
+                (int)(Math.random()*HEIGHT),
+                30,
+                30,
+                new Color(1,0,1,1),
+                player));
     }
 
     public void renderEntities() {
         for(Entity e: entities) {
-            e.render(shapeRenderer);
-            e.renderCollisionBox(shapeRenderer);
+            if(e.isAlive()) {
+                e.render(shapeRenderer);
+                e.renderCollisionBox(shapeRenderer);
+            }
         }
     }
 
@@ -69,12 +89,22 @@ public class GameScreen implements Screen {
                     player.setHeight(player.getHeight()+5);
                     player.setWidth(player.getWidth()+5);
                 }
-                else if(entities.get(i) instanceof PoisonEntity) {
-                    entities.remove(i);
+                else if(entities.get(i) instanceof PoisonEntity && entities.get(i).isAlive()) {
+                    //entities.remove(i);
+                    entities.get(i).setAlive(false);
                     player.setHeight(player.getHeight()-5);
                     player.setWidth(player.getWidth()-5);
                 }
+                else if(entities.get(i) instanceof SimpleChaseEnemy) {
+                    gameOver = true;
+                }
             }
+        }
+    }
+
+    public void updateEntities(float delta) {
+        for(Entity e: entities) {
+            e.act(delta);
         }
     }
 
@@ -82,18 +112,26 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         clearScreen();
 
-        //updates, input, AI
-        player.updatePlayer(delta);
+        if(!gameOver) {
+            //updates, input, AI
+            player.act(delta);
+            updateEntities(delta);
+            entitySpawner.act(entities);
 
-        //check for collisions
-        checkCollisions();
+            //check for collisions
+            checkCollisions();
 
-        //draw the updates
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        renderEntities();
-        player.render(shapeRenderer);
-        player.renderCollisionBox(shapeRenderer);
-        shapeRenderer.end();
+            spriteBatch.begin();
+            renderGUI(spriteBatch);
+            spriteBatch.end();
+
+            //draw the updates
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            renderEntities();
+            player.render(shapeRenderer);
+            player.renderCollisionBox(shapeRenderer);
+            shapeRenderer.end();
+        }
     }
 
     @Override

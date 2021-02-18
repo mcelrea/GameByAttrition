@@ -3,11 +3,11 @@ package com.mcelrea;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class Player extends Entity {
 
     private float speed;
+    private float maxSpeed = 300;
 
     public Player() {
         //a red box
@@ -17,7 +17,9 @@ public class Player extends Entity {
         speed = 150;
     }
 
-    public void updatePlayer(float delta) {
+    public void act(float delta) {
+        speed = maxSpeed - ((width*height)/10);
+
         if(Gdx.input.isKeyPressed(Input.Keys.UP)) {
             y += speed * delta;
         }
