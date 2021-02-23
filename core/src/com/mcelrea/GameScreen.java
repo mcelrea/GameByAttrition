@@ -20,11 +20,11 @@ public class GameScreen implements Screen {
 
     private boolean gameOver = false;
 
-    public static Player player = new Player();
+    public static Player player;
 
-    ArrayList<Entity> entities = new ArrayList<Entity>();
+    ArrayList<Entity> entities;
 
-    EntitySpawner entitySpawner = new EntitySpawner(1000);
+    EntitySpawner entitySpawner;
 
     private long startTime;
 
@@ -43,6 +43,13 @@ public class GameScreen implements Screen {
     //Controls the world view through he camera
     private Viewport viewport;
 
+    //Breadcrumb back to MyGdxGame
+    MyGdxGame game;
+
+    public GameScreen(MyGdxGame game) {
+        this.game = game;
+    }
+
     @Override
     public void show() {
         spriteBatch = new SpriteBatch();
@@ -51,6 +58,10 @@ public class GameScreen implements Screen {
         camera = new OrthographicCamera(WIDTH, HEIGHT);
         viewport = new FitViewport(WIDTH, HEIGHT, camera);
         defaultFont = new BitmapFont();
+        gameOver = false;
+        player = new Player();
+        entities = new ArrayList<Entity>();
+        entitySpawner = new EntitySpawner(1000);
 
         createEntities();
 
@@ -131,6 +142,9 @@ public class GameScreen implements Screen {
             player.render(shapeRenderer);
             player.renderCollisionBox(shapeRenderer);
             shapeRenderer.end();
+        }
+        else { //game is over
+            game.changeScreentoStart();
         }
     }
 
