@@ -32,6 +32,13 @@ public class Entity {
         yVel = (float)(-150 + Math.random() * 301);
     }
 
+    public boolean isOffScreen() {
+        return x > GameScreen.WIDTH ||
+                x + width < 0 ||
+                y > GameScreen.HEIGHT ||
+                y + height < 0;
+    }
+
     public void act(float delta) {
         x += xVel * delta;
         y += yVel * delta;

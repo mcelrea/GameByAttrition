@@ -23,10 +23,11 @@ public class GameScreen implements Screen {
     public static Player player;
 
     ArrayList<Entity> entities;
+    public static ArrayList<Bullet> playerBullets;
 
     EntitySpawner entitySpawner;
 
-    private long startTime;
+    public static long startTime;
 
     //SpriteBatch allows the drawing of sprites (2D images) to the screen
     private SpriteBatch spriteBatch;
@@ -61,6 +62,7 @@ public class GameScreen implements Screen {
         gameOver = false;
         player = new Player();
         entities = new ArrayList<Entity>();
+        playerBullets = new ArrayList<Bullet>();
         entitySpawner = new EntitySpawner(1000);
 
         createEntities();
@@ -92,6 +94,15 @@ public class GameScreen implements Screen {
         }
     }
 
+    public void renderPlayerBullets() {
+        for(Bullet b: playerBullets) {
+            if(b.isAlive()) {
+                b.render(shapeRenderer);
+                b.renderCollisionBox(shapeRenderer);
+            }
+        }
+    }
+
     public void checkCollisions() {
         for(int i=entities.size()-1; i >= 0; i--) {
             if(player.isColliding(entities.get(i))) {
@@ -109,6 +120,17 @@ public class GameScreen implements Screen {
                 else if(entities.get(i) instanceof SimpleChaseEnemy) {
                     gameOver = true;
                 }
+                else if (entities.get(i) instanceof  NewEnemy) {
+                    if (((NewEnemy) entities.get(i)).isEatable()) {
+                        entities.remove(i);
+                        player.setHeight(player.getHeight()-2);
+                        player.setWidth(player.getWidth()-2);
+                    }
+                    else {
+                        gameOver = true;
+                    }
+                }
+
             }
         }
     }
@@ -116,6 +138,15 @@ public class GameScreen implements Screen {
     public void updateEntities(float delta) {
         for(Entity e: entities) {
             e.act(delta);
+        }
+    }
+
+    public void updatePlayerBullets(float delta) {
+        for(int i = playerBullets.size()-1; i >= 0; i--) {
+            Bullet b = playerBullets.get(i);
+            b.act(delta);
+            if(b.isOffScreen())
+                playerBullets.remove(i);
         }
     }
 
@@ -127,6 +158,7 @@ public class GameScreen implements Screen {
             //updates, input, AI
             player.act(delta);
             updateEntities(delta);
+            updatePlayerBullets(delta);
             entitySpawner.act(entities);
 
             //check for collisions
@@ -139,6 +171,7 @@ public class GameScreen implements Screen {
             //draw the updates
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
             renderEntities();
+            renderPlayerBullets();
             player.render(shapeRenderer);
             player.renderCollisionBox(shapeRenderer);
             shapeRenderer.end();

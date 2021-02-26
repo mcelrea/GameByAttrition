@@ -33,7 +33,7 @@ public class EntitySpawner {
                         20,
                         new Color(0, 1, 0, 1)));
             }*/
-            entities.add(new SimpleChaseEnemy((float) (Math.random() * GameScreen.WIDTH),
+            entities.add(new NewEnemy((float) (Math.random() * GameScreen.WIDTH),
                     (float) (Math.random() * GameScreen.HEIGHT),
                     20,
                     20,
