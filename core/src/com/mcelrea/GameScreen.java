@@ -2,6 +2,7 @@ package com.mcelrea;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -28,6 +29,10 @@ public class GameScreen implements Screen {
     EntitySpawner entitySpawner;
 
     public static long startTime;
+    public static long finalTime;
+
+    //sounds
+    Sound enemyHitSound;
 
     //SpriteBatch allows the drawing of sprites (2D images) to the screen
     private SpriteBatch spriteBatch;
@@ -64,6 +69,8 @@ public class GameScreen implements Screen {
         entities = new ArrayList<Entity>();
         playerBullets = new ArrayList<Bullet>();
         entitySpawner = new EntitySpawner(1000);
+
+        enemyHitSound = Gdx.audio.newSound(Gdx.files.internal("hitEnemySound.wav"));
 
         createEntities();
 
@@ -103,7 +110,7 @@ public class GameScreen implements Screen {
         }
     }
 
-    public void checkCollisions() {
+    public void checkPlayerCollisions() {
         for(int i=entities.size()-1; i >= 0; i--) {
             if(player.isColliding(entities.get(i))) {
                 if(entities.get(i) instanceof EatableEntity) {
@@ -117,8 +124,10 @@ public class GameScreen implements Screen {
                     player.setHeight(player.getHeight()-5);
                     player.setWidth(player.getWidth()-5);
                 }
-                else if(entities.get(i) instanceof SimpleChaseEnemy) {
+                else if(entities.get(i) instanceof SimpleChaseEnemy || entities.get(i) instanceof PatrolEntity
+                           || entities.get(i) instanceof FastChaseEnemy || entities.get(i) instanceof ZamoraEntity) {
                     gameOver = true;
+                    finalTime = System.currentTimeMillis() - startTime;
                 }
                 else if (entities.get(i) instanceof  NewEnemy) {
                     if (((NewEnemy) entities.get(i)).isEatable()) {
@@ -128,6 +137,7 @@ public class GameScreen implements Screen {
                     }
                     else {
                         gameOver = true;
+                        finalTime = System.currentTimeMillis() - startTime;
                     }
                 }
 
@@ -147,6 +157,15 @@ public class GameScreen implements Screen {
             b.act(delta);
             if(b.isOffScreen())
                 playerBullets.remove(i);
+            else {
+                for(int j=entities.size()-1; j >= 0; j--) {
+                    if(b.isColliding(entities.get(j))) {
+                        entities.remove(j);
+                        playerBullets.remove(i);
+                        break;
+                    }
+                }
+            }
         }
     }
 
@@ -162,7 +181,7 @@ public class GameScreen implements Screen {
             entitySpawner.act(entities);
 
             //check for collisions
-            checkCollisions();
+            checkPlayerCollisions();
 
             spriteBatch.begin();
             renderGUI(spriteBatch);
@@ -177,7 +196,7 @@ public class GameScreen implements Screen {
             shapeRenderer.end();
         }
         else { //game is over
-            game.changeScreentoStart();
+            game.changeScreentoEnd();
         }
     }
 

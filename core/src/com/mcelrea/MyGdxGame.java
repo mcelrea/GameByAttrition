@@ -16,4 +16,8 @@ public class MyGdxGame extends Game {
 	public void changeScreentoStart() {
 		setScreen(new StartScreen(this));
 	}
+
+	public void changeScreentoEnd() {
+		setScreen(new EndScreen(this));
+	}
 }

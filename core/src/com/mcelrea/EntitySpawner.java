@@ -17,28 +17,48 @@ public class EntitySpawner {
     public void act(ArrayList<Entity> entities) {
         //has enough time passed
         if(lastSpawnTime+delay < System.currentTimeMillis()) {
-            /*
-            int choice = (int)(1 + Math.random() * 2);
+
+            int choice = (int)(1 + Math.random() * 5);
             if(choice == 1) {
-                entities.add(new EatableEntity((float) (Math.random() * GameScreen.WIDTH),
+                entities.add(new NewEnemy((float) (Math.random() * GameScreen.WIDTH),
                         (float) (Math.random() * GameScreen.HEIGHT),
                         20,
                         20,
-                        new Color(0, 0, 1, 1)));
+                        new Color(0, 0, 1, 1),
+                        GameScreen.player));
             }
-            else {
-                entities.add(new PoisonEntity((float) (Math.random() * GameScreen.WIDTH),
+            else if(choice == 2) {
+                entities.add(new TrashEntity((float) (Math.random() * GameScreen.WIDTH),
                         (float) (Math.random() * GameScreen.HEIGHT),
                         20,
                         20,
-                        new Color(0, 1, 0, 1)));
-            }*/
-            entities.add(new NewEnemy((float) (Math.random() * GameScreen.WIDTH),
-                    (float) (Math.random() * GameScreen.HEIGHT),
-                    20,
-                    20,
-                    new Color(0, 0, 1, 1),
-                    GameScreen.player));
+                        new Color(0, 0, 1, 1),
+                        GameScreen.player));
+            }
+            else if(choice == 3) {
+                entities.add(new ZamoraEntity((float) (Math.random() * GameScreen.WIDTH),
+                        (float) (Math.random() * GameScreen.HEIGHT),
+                        20,
+                        20,
+                        new Color(0, 0, 1, 1),
+                        GameScreen.player));
+            }
+            else if(choice == 4) {
+                entities.add(new FastChaseEnemy((float) (Math.random() * GameScreen.WIDTH),
+                        (float) (Math.random() * GameScreen.HEIGHT),
+                        20,
+                        20,
+                        new Color(0, 0, 1, 1),
+                        GameScreen.player, 1000, 150));
+            }
+            else if(choice == 5) {
+                entities.add(new PatrolEntity((float) (10),
+                        (float) (10),
+                        20,
+                        20,
+                        new Color(0, 0, 1, 1),
+                        GameScreen.player));
+            }
             lastSpawnTime = System.currentTimeMillis();//reset the timer
         }
     }

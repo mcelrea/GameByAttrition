@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-public class StartScreen implements Screen {
+public class EndScreen implements Screen {
 
     //SpriteBatch allows the drawing of sprites (2D images) to the screen
     private SpriteBatch spriteBatch;
@@ -27,7 +27,7 @@ public class StartScreen implements Screen {
     //Breadcrumb back to MyGdxGame
     MyGdxGame game;
 
-    public StartScreen(MyGdxGame game) {
+    public EndScreen(MyGdxGame game) {
         this.game = game;
     }
 
@@ -41,7 +41,7 @@ public class StartScreen implements Screen {
 
     public void userInput() {
         if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            game.changeScreenToGameplay();
+            game.changeScreentoStart();
         }
     }
 
@@ -52,7 +52,9 @@ public class StartScreen implements Screen {
         userInput();
 
         spriteBatch.begin();
-        defaultFont.draw(spriteBatch,"Press Spacebar To Play", 500, 300);
+        defaultFont.draw(spriteBatch,"GAME OVER", 500, 300);
+        defaultFont.draw(spriteBatch,"FINAL SCORE: " + GameScreen.finalTime, 500, 250);
+        defaultFont.draw(spriteBatch,"Press Spacebar to Continue...", 500, 200);
         spriteBatch.end();
     }
 
