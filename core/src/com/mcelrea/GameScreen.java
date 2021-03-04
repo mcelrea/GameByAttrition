@@ -6,6 +6,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -33,6 +34,7 @@ public class GameScreen implements Screen {
 
     //sounds
     Sound enemyHitSound;
+    Sound playerDeathSound = Gdx.audio.newSound(Gdx.files.internal("death sound.wav"));
 
     //SpriteBatch allows the drawing of sprites (2D images) to the screen
     private SpriteBatch spriteBatch;
@@ -70,7 +72,7 @@ public class GameScreen implements Screen {
         playerBullets = new ArrayList<Bullet>();
         entitySpawner = new EntitySpawner(1000);
 
-        enemyHitSound = Gdx.audio.newSound(Gdx.files.internal("hitEnemySound.wav"));
+        enemyHitSound = Gdx.audio.newSound(Gdx.files.internal("my explosion.wav"));
 
         createEntities();
 
@@ -127,6 +129,7 @@ public class GameScreen implements Screen {
                 else if(entities.get(i) instanceof SimpleChaseEnemy || entities.get(i) instanceof PatrolEntity
                            || entities.get(i) instanceof FastChaseEnemy || entities.get(i) instanceof ZamoraEntity) {
                     gameOver = true;
+                    playerDeathSound.play();
                     finalTime = System.currentTimeMillis() - startTime;
                 }
                 else if (entities.get(i) instanceof  NewEnemy) {
@@ -137,6 +140,7 @@ public class GameScreen implements Screen {
                     }
                     else {
                         gameOver = true;
+                        playerDeathSound.play();
                         finalTime = System.currentTimeMillis() - startTime;
                     }
                 }
@@ -162,6 +166,7 @@ public class GameScreen implements Screen {
                     if(b.isColliding(entities.get(j))) {
                         entities.remove(j);
                         playerBullets.remove(i);
+                        enemyHitSound.play();
                         break;
                     }
                 }

@@ -3,8 +3,10 @@ package com.mcelrea;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -27,6 +29,11 @@ public class StartScreen implements Screen {
     //Breadcrumb back to MyGdxGame
     MyGdxGame game;
 
+    static boolean readTitle = true;
+    Sound titleAnnouncement = Gdx.audio.newSound(Gdx.files.internal("title screen announcement.wav"));
+    Texture titleScreen = new Texture("titleScreen.jpg");
+    Sound music = Gdx.audio.newSound(Gdx.files.internal("After Combat 1.mp3"));
+
     public StartScreen(MyGdxGame game) {
         this.game = game;
     }
@@ -37,10 +44,17 @@ public class StartScreen implements Screen {
         camera = new OrthographicCamera(GameScreen.WIDTH, GameScreen.HEIGHT);
         viewport = new FitViewport(GameScreen.WIDTH, GameScreen.HEIGHT, camera);
         defaultFont = new BitmapFont();
+
+        if(readTitle) {
+            titleAnnouncement.play();
+            readTitle = false;
+        }
+        music.play();
     }
 
     public void userInput() {
         if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            music.stop();
             game.changeScreenToGameplay();
         }
     }
@@ -52,7 +66,8 @@ public class StartScreen implements Screen {
         userInput();
 
         spriteBatch.begin();
-        defaultFont.draw(spriteBatch,"Press Spacebar To Play", 500, 300);
+        spriteBatch.draw(titleScreen, 0, 0);
+        //defaultFont.draw(spriteBatch,"Press Spacebar To Play", 500, 300);
         spriteBatch.end();
     }
 
