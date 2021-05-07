@@ -2,11 +2,14 @@ package com.mcelrea;
 
 import com.badlogic.gdx.graphics.Color;
 
+import java.util.ArrayList;
+
 public class Chaser extends Entity {
     private Entity target = null;
     private Chaser holdItem = null;
     private float additionalSpeed = 0;
     private float speed;
+    ArrayList<Object> objects = new ArrayList();
 
     public Chaser(Entity target) {
         super();
